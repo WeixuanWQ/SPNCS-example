@@ -1,4 +1,4 @@
-function [MATI_f] = No_MIATIs_FUNCTION(k,a1,a2,a3,a4,a5,a6,n1,n2,lambda_s_star,lambda_f_star,mu_factor,a_rho_s_low,a_rho_f_low)
+function [MATI_f,T_star,epsilon_star, d] = No_MIATIs_FUNCTION(k,a1,a2,a3,a4,a5,a6,n1,n2,lambda_s_star,lambda_f_star,mu_factor,a_rho_s_low,a_rho_f_low)
 % k = 1.5;%63; % k should be greater than 0.5
 % 
 % a1 = 0.001;
@@ -87,7 +87,7 @@ b3 = 2*(abs(a2*a3/a4)*abs(p12f) + abs(a2*a3/a4)*(p22f) + abs(a2)*gamma_f/lambda_
 cost = b1 + b2 + gamma_s + p11s + p11f + abs(p12s) + gamma_f + b3;
 %      b1 + b2 + p11f + gamma_f + b3;
 
-sol = optimize(constraints,cost, sdpsettings('debug',1));
+sol = optimize(constraints,cost, sdpsettings('debug',1,'solver','BMIBNB'));
 if sol.problem == 0
  gamma_s = value(gamma_s);
  
@@ -162,7 +162,7 @@ b2_new = sqrt(max(eig(Gamma_b2'*Gamma_b2)));
 
 
 % New b3
-Gamma_b3 = [2*abs((a2*a3/a4)*p12f) abs((a1*a3/a4)*p22f) abs(a2)*gamma_f/(lambda_f_star);...
+Gamma_b3 = [2*abs((a2*a3/a4)*p12f) abs((a2*a3/a4)*p22f) abs(a2)*gamma_f/(lambda_f_star);...
               abs((a2*a3/a4)*p22f) 0 0;...
               abs(a2)*gamma_f/(lambda_f_star) 0 0];
 Gamma_b3 = value(Gamma_b3);
@@ -183,7 +183,8 @@ lambda_2 = (n2/a2)*value(2*(abs(p11f)+abs(p12f))/sqrt(underline_a_Vf));
 
 
 aa = lambda_1/(gamma_s*lambda_s_star);
-bb = 0.5*(lambda_2/(gamma_s*lambda_s_star) + lambda_2);
+%bb = 0.5*(lambda_2/(gamma_s*lambda_s_star) + lambda_2);
+bb = 0.5*lambda_2* max(1/(gamma_s*lambda_s_star) , 1);
 cc = 1 - lambda * exp(mu*MIATI_s);
 
 d = ((-bb + sqrt(bb^2 - 4*aa*cc))/(2*aa))^2;
