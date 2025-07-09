@@ -128,8 +128,8 @@ underline_a_Uf = min(underline_a_Vf,gamma_f*lambda_f_star);
 overline_a_Us = max(overline_a_Vs, gamma_s/lambda_s_star);
 %overline_a_Uf = max(overline_a_Vf, gamma_f/lambda_f_star);
 
-a_phi_1 = sqrt(1/underline_a_Us);
-a_phi_2 = sqrt(1/underline_a_Uf);
+a_phi_s = sqrt(1/underline_a_Us);
+a_phi_f = sqrt(1/underline_a_Uf);
 
 %L=1; %Lipschitz constant of H_bar
 
@@ -170,7 +170,7 @@ Gamma_b3 = value(Gamma_b3);
 b3_new = sqrt(max(eig(Gamma_b3'*Gamma_b3)));
 
 
-mu = mu_factor*as*a_phi_1^2;
+mu = mu_factor*as*a_phi_s^2;
 
 lambda_LB = exp(-mu*MIATI_s/overline_a_Us); % Since we have overline_a_Us > d*overline_a_Uf
 ratio = 0.01;
@@ -189,12 +189,11 @@ cc = 1 - lambda * exp(mu*MIATI_s);
 
 d = ((-bb + sqrt(bb^2 - 4*aa*cc))/(2*aa))^2;
 
-comp1 = a_phi_1/(af*d);
-comp2 = ((b1_new+d*b2_new)*a_phi_1*a_phi_2)^2/(as*a_phi_1^2 - mu);
-comp3 = b3*a_phi_2^2/af;
 
-epsilon_star = (comp1*(0.25*comp2+mu*d)+comp3)^(-1);
-
+comp11 = 1/(af*d*a_phi_f^2);
+comp22 = ((b1+d*b2)*a_phi_s*a_phi_f)^2/(as*a_phi_s^2 - mu);
+comp33 = b3/af;
+epsilon_star = (comp11*(0.25*comp22+mu*d)+comp33)^(-1);
 MATI_f = epsilon_star*T_star;
 
 
